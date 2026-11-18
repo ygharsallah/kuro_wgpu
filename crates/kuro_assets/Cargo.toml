@@ -1,0 +1,10 @@
+[package]
+name = "kuro_assets"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[dependencies]
+anyhow.workspace = true
+kuro_core = { workspace = true }
+gltf = { workspace = true }

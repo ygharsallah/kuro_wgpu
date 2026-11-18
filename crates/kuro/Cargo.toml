@@ -1,0 +1,9 @@
+[package]
+name = "kuro"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+kuro_core = { workspace = true }
+kuro_assets = { workspace = true }
+kuro_app = { workspace = true }

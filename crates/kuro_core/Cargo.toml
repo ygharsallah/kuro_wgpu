@@ -1,0 +1,11 @@
+[package]
+name = "kuro_core"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[dependencies]
+palette.workspace = true
+glam = { workspace = true }
+bytemuck = { workspace = true }
+uuid = { workspace = true }

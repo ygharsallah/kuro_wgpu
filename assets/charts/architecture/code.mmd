@@ -1,0 +1,47 @@
+flowchart TD
+    subgraph User["User Code (main.rs)"]
+        Init["App::new(AppConfig)"]
+        LoadCall["app.storage.load_gltf(path)"]
+        SpawnCall["app.workspace.spawn(asset_id, pos)"]
+        LoopClosure["app.run(|workspace, dt| { ... })"]
+    end
+
+    subgraph StorageSys["Storage (Asset Pipeline)"]
+        IdGen["AtomicU64 -> AssetId"]
+        BgThread["Background Thread\n(Disk I/O & glTF Parse)"]
+        Channel[["mpsc Channel\n(MeshData)"]]
+        AssetMap[("Asset Map\nLoading | ReadyCpu | ReadyGpu")]
+    end
+
+    subgraph WorkspaceSys["Workspace (Scene State)"]
+        Cam["Camera\n(Position, Target, FOV)"]
+        ModelMap[("Models HashMap\nModelId -> { AssetId, Transform, Color }")]
+    end
+
+    subgraph GpuSys["Internal GpuRenderer (Main Thread 60+ FPS)"]
+        Flush["1. Drain Channel & Upload\nVertex/Index Buffers to VRAM"]
+        Update["2. Run User Closure\nMutate Transforms & Camera"]
+        Draw["3. Render Pass\nDraw Models with ReadyGpu Meshes"]
+    end
+
+    %% Initialization & Loading Flow
+    Init --> LoadCall
+    LoadCall --> IdGen
+    IdGen -->|Returns immediately| SpawnCall
+    IdGen -.->|Spawns| BgThread
+    BgThread -.->|Sends parsed vertices| Channel
+
+    %% Spawning Flow
+    SpawnCall -->|Inserts lightweight Model| ModelMap
+
+    %% Frame Loop Flow
+    Init --> LoopClosure
+    LoopClosure --> Flush
+    Channel --> Flush
+    Flush --> AssetMap
+    Flush --> Update
+    Update <-->|Mutates| ModelMap
+    Update --> Draw
+    Cam --> Draw
+    ModelMap -->|Reads AssetId & Transform| Draw
+    AssetMap -->|Binds GPU Buffers| Draw

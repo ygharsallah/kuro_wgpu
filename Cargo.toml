@@ -1,0 +1,21 @@
+[workspace]
+resolver = "3"
+members = ["crates/kuro", "crates/kuro_app", "crates/kuro_assets", "crates/kuro_core", "examples/humans"]
+
+[workspace.dependencies]
+# Internal
+kuro = { path = "crates/kuro" }
+kuro_app = { path = "crates/kuro_app" }
+kuro_assets = { path = "crates/kuro_assets" }
+kuro_core = { path = "crates/kuro_core" }
+
+# External
+palette = { version = "0.7", default-features = false, features = ["std"] }
+anyhow = "1"
+wgpu = "30.0"
+winit = "0.30"
+glam = "0.30"
+bytemuck = { version = "1.22", features = ["derive"] }
+gltf = "1.4"
+pollster = "0.4"
+uuid = { version = "1.11", features = ["v4"] }

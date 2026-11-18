@@ -1,0 +1,15 @@
+[package]
+name = "kuro_app"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[dependencies]
+anyhow.workspace = true
+kuro_core = { workspace = true }
+kuro_assets = { workspace = true }
+wgpu = { workspace = true }
+winit = { workspace = true }
+pollster = { workspace = true }
+bytemuck = { workspace = true }
+glam = { workspace = true }
